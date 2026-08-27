@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Base neutra oscura, común a todos los ambientes */
+  --color-base: #0a0a0c;
+  --color-surface: #16161a;
+  --color-text: #f2f1ee;
+  --color-text-soft: #a8a6a0;
+  --color-text-muted: #6f6d68;
+  --color-line: #2a2a2e;
+
+  /* Acento por ambiente — cada uno define el suyo vía data-attribute */
+  --color-accent: #8fa8c9;
+
+  --font-ui: 'Sora', sans-serif;
+  --font-timer: 'Space Mono', monospace;
+}
+
+body {
+  background-color: var(--color-base);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+}
+
+/* Paletas por ambiente */
+[data-env="rain"] {
+  --color-base: #0d1b2a;
+  --color-surface: #16283c;
+  --color-accent: #7fa8c9;
+}
+
+[data-env="coffee"] {
+  --color-base: #241812;
+  --color-surface: #382519;
+  --color-accent: #d9a15b;
+}
+
+[data-env="forest"] {
+  --color-base: #0f1f16;
+  --color-surface: #182b1f;
+  --color-accent: #7fb88a;
+}
+
+[data-env="space"] {
+  --color-base: #050508;
+  --color-surface: #101018;
+  --color-accent: #a48fe0;
+}
+
+@media print {
+  body {
+    display: none;
+  }
+}
