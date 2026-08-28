@@ -7,7 +7,7 @@ const CROSSFADE_SECONDS = 2;
  * punto de loop para disimular cortes audibles (incluso si el archivo
  * no viene con un loop perfecto).
  *
- * Si `soundFile` es null, genera ruido blanco 100% con Web Audio API,
+ * Si `soundFile` es null, genera ruido marrón (brown noise) 100% con Web Audio API,
  * sin archivo. Si tiene un archivo asociado, lo descarga una vez,
  * decodifica el buffer completo, y encadena copias superpuestas con
  * fade-out/fade-in cruzado en cada vuelta.
@@ -114,16 +114,37 @@ export function useAmbientSound(soundFile: string | null, volume: number) {
     }
   }
 
-  function playWhiteNoise() {
+  function playBrownNoise() {
     const ctx = new AudioContext();
     const bufferSize = 2 * ctx.sampleRate;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+    // Leaky integrator: produces −6 dB/octave (brown/red noise) power spectrum.
+    let lastOut = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      data[i] = (lastOut + 0.02 * white) / 1.02;
+      lastOut = data[i];
+    }
+
+    // Normalize to peak = 1.0 to prevent clipping while maximizing headroom.
+    const peak = data.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
+    if (peak > 0) {
+      for (let i = 0; i < bufferSize; i++) data[i] /= peak;
+    }
+
+    // 10 ms micro-fade at buffer boundaries to eliminate any loop-seam click.
+    const fadeSamples = Math.round(0.01 * ctx.sampleRate);
+    for (let i = 0; i < fadeSamples; i++) {
+      const t = i / fadeSamples;
+      data[i] *= t;
+      data[bufferSize - 1 - i] *= t;
+    }
 
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
-    noise.loop = true; // el ruido blanco es indistinguible en el punto de loop, no necesita crossfade
+    noise.loop = true; // señal estacionaria: el punto de loop es inaudible
 
     const gain = ctx.createGain();
     gain.gain.value = volume;
@@ -140,7 +161,7 @@ export function useAmbientSound(soundFile: string | null, volume: number) {
 
   function play() {
     if (soundFile === null) {
-      playWhiteNoise();
+      playBrownNoise();
     } else {
       void playFile(soundFile);
     }
