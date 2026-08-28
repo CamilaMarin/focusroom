@@ -49,6 +49,13 @@ export function useTimer({ focusMs, breakMs, onPhaseComplete }: UseTimerOptions)
     return () => window.clearInterval(id);
   }, [state, tick]);
 
+  function updateDuration(newFocusMs: number) {
+    if (state === "idle" || state === "completed") {
+      phaseDuration.current = newFocusMs;
+      setRemainingMs(newFocusMs);
+    }
+  }
+
   function start() {
     setPhase("focus");
     phaseDuration.current = focusMs;
@@ -79,5 +86,5 @@ export function useTimer({ focusMs, breakMs, onPhaseComplete }: UseTimerOptions)
     setState("idle");
   }
 
-  return { state, phase, remainingMs, start, pause, resume, reset };
+  return { state, phase, remainingMs, start, pause, resume, reset, updateDuration, };
 }

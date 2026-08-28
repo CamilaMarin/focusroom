@@ -27,6 +27,21 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          {
+            // Cache ambient MP3 files on first use so they work offline
+            // after being played at least once. CacheFirst avoids re-fetching
+            // on subsequent plays and keeps audio available while offline.
+            urlPattern: /\/sounds\/.*\.mp3$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'focusroom-audio',
+              expiration: {
+                maxEntries: 10,
+              },
+            },
+          },
+        ],
       },
     }),
   ],
