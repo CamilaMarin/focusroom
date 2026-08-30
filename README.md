@@ -41,27 +41,34 @@ posible clic residual.
 ## Agregar los sonidos ambientales
 
 El ambiente visual y el sonido se seleccionan de forma independiente.
-El ruido marrón se genera en el navegador y no requiere ningún archivo.
-Para lluvia, cafetería y bosque, necesitas conseguir tus propios archivos
-de audio (por temas de licencia, no vienen incluidos) y ponerlos
-exactamente acá:
 
-```
+El ruido marrón se genera directamente en el navegador y no requiere ningún archivo.
+
+Para lluvia, cafetería y bosque, los archivos de audio deben estar ubicados exactamente aquí:
+
+```text
 public/sounds/rain.mp3
 public/sounds/coffee-shop.mp3
 public/sounds/forest.mp3
 ```
 
-Recomendado: [freesound.org](https://freesound.org), filtrando por
-licencia **CC0** (dominio público, sin necesidad de atribución). Busca
-algo como "rain loop", "coffee shop ambience", "forest ambience". Si el
-archivo no existe, la app no se rompe — muestra un aviso indicando qué
-archivo falta.
+### Fuentes y licencias
+
+Los archivos utilizados en el proyecto provienen de fuentes que permiten su redistribución.
+
+| Sonido | Archivo | Fuente | Licencia |
+|---|---|---|---|
+| Lluvia | `rain.mp3` | OpenGameArt — AMB Rain Loop 1 | CC0 |
+| Cafetería | `coffee-shop.mp3` | Freesound — Artemis_R_Swann | CC0 |
+| Bosque | `forest.mp3` | OpenGameArt — Forest Ambience | CC0 |
+
+Las páginas de origen se mantienen como referencia para conservar la trazabilidad y verificar las condiciones de licencia.
+
+Si un archivo no existe, la aplicación no se rompe: muestra un aviso indicando qué archivo falta.
 
 ### Estándar de activos de audio
 
-Usa estos parámetros al exportar o convertir los archivos para mantener
-la calidad y el tamaño bajo control:
+Usa estos parámetros al exportar o convertir los archivos para mantener una buena relación entre calidad y tamaño:
 
 | Parámetro | Valor recomendado |
 |---|---|
@@ -69,19 +76,16 @@ la calidad y el tamaño bajo control:
 | Bitrate objetivo | 96 kbps CBR |
 | Sample rate | 44 100 Hz |
 | Canales | Mono preferido; estéreo si la amplitud espacial es perceptible |
-| Duración | 60 – 120 segundos |
+| Duración | 60–120 segundos |
 | Tamaño máximo | ~2 MB por archivo |
 | Loop | El clip debe volver al inicio sin clic ni silencio audible |
 | Licencia | Debe permitir redistribución (CC0, CC BY u equivalente) |
 
-> MP3 a 96 kbps es compatible con todos los navegadores modernos
-> incluyendo Safari/iOS, y es suficiente para sonido ambiental. Formatos
-> como OGG Vorbis **no son compatibles con Safari** y no deben usarse.
->
-> Los archivos MP3 **no** se precargan en la instalación de la PWA
-> (serían demasiado grandes para el caché inicial). En cambio, el
-> service worker los almacena en caché la primera vez que se reproducen,
-> y quedan disponibles sin conexión a partir de entonces.
+> MP3 a 96 kbps es suficiente para sonido ambiental y ofrece una buena relación entre calidad y tamaño.
+
+> Los archivos de audio incluidos en `public/sounds/` forman parte del build de la aplicación y pueden ser incorporados al caché de la PWA según la configuración de Workbox. No se debe asumir que estarán disponibles offline hasta verificar su presencia en el precache generado después de `npm run build`.
+
+Para añadir un nuevo sonido, además de colocar el archivo en `public/sounds/`, registra su fuente y licencia en esta sección del README.
 
 ## Desarrollo local
 
