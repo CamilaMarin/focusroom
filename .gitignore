@@ -3,5 +3,4 @@ dist
 dev-dist
 .env.local
 *.local
-public/sounds/
 .kiro/
